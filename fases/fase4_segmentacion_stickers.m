@@ -64,6 +64,14 @@ function datos = fase4_segmentacion_stickers(datos, cfg)
 
     end
 
+    % Figura especial para README / GitHub.
+    % Esta figura resume el efecto de la limpieza morfológica.
+    if cfg.generar_figuras_readme
+
+        guardar_figura_morfologia_readme(seg1, seg2, cfg);
+
+    end
+
 
     %% ------------------------------------------------------------
     % 4. Guardar resultados
@@ -113,6 +121,24 @@ function datos = fase4_segmentacion_stickers(datos, cfg)
     fprintf('=================================================\n');
 
     fprintf('\nFASE 4 finalizada correctamente.\n');
+
+    %% ------------------------------------------------------------
+    % Figuras para README / GitHub
+    % ------------------------------------------------------------
+
+    if ~isfield(cfg, 'generar_figuras_readme')
+        cfg.generar_figuras_readme = false;
+    end
+
+    if ~isfield(cfg, 'docs_img_dir')
+        cfg.docs_img_dir = fullfile('docs', 'img');
+    end
+
+    if ~isfield(cfg, 'nombre_figura_morfologia')
+        cfg.nombre_figura_morfologia = fullfile( ...
+            cfg.docs_img_dir, ...
+            'fase4_morfologia.png');
+    end
 
 end
 
@@ -761,5 +787,122 @@ function visualizar_mascaras_por_color(masks_color, nombre_img)
     subplot(2,3,6);
     imshow(masks_color.white);
     title('Blanco');
+
+end
+
+%% ================================================================
+% FUNCIÓN LOCAL: Guardar figura de morfología para README
+% ================================================================
+
+function guardar_figura_morfologia_readme(seg1, seg2, cfg)
+% ================================================================
+% Genera una figura comparativa para documentar la etapa de
+% segmentación y limpieza morfológica en el README.
+%
+% La figura muestra:
+%   - ROI RGB.
+%   - Máscara preliminar raw.
+%   - Máscara limpia luego de morfología.
+%   - Contornos de la máscara limpia sobre la ROI.
+% ================================================================
+
+    if ~exist(cfg.docs_img_dir, 'dir')
+        mkdir(cfg.docs_img_dir);
+    end
+
+    fig = figure( ...
+        'Name', 'Fase 4 - Morfología para README', ...
+        'NumberTitle', 'off', ...
+        'Color', 'k', ...
+        'Position', [100 100 1400 650]);
+
+    if ~cfg.mostrar_figuras
+        set(fig, 'Visible', 'off');
+    end
+
+    %% ------------------------------------------------------------
+    % Imagen 1
+    % ------------------------------------------------------------
+
+    subplot(2,4,1);
+    imshow(seg1.img_roi);
+    titulo_dark('Imagen 1 - ROI RGB');
+
+    subplot(2,4,2);
+    imshow(seg1.mask_raw);
+    titulo_dark('Imagen 1 - Máscara raw');
+
+    subplot(2,4,3);
+    imshow(seg1.mask_clean);
+    titulo_dark('Imagen 1 - Máscara limpia');
+
+    subplot(2,4,4);
+    imshow(seg1.img_roi);
+    titulo_dark('Imagen 1 - Contornos finales');
+    hold on;
+    visboundaries(seg1.mask_clean, 'Color', 'g', 'LineWidth', 1);
+    hold off;
+
+    %% ------------------------------------------------------------
+    % Imagen 2
+    % ------------------------------------------------------------
+
+    subplot(2,4,5);
+    imshow(seg2.img_roi);
+    titulo_dark('Imagen 2 - ROI RGB');
+
+    subplot(2,4,6);
+    imshow(seg2.mask_raw);
+    titulo_dark('Imagen 2 - Máscara raw');
+
+    subplot(2,4,7);
+    imshow(seg2.mask_clean);
+    titulo_dark('Imagen 2 - Máscara limpia');
+
+    subplot(2,4,8);
+    imshow(seg2.img_roi);
+    titulo_dark('Imagen 2 - Contornos finales');
+    hold on;
+    visboundaries(seg2.mask_clean, 'Color', 'g', 'LineWidth', 1);
+    hold off;
+
+    sg = sgtitle('Fase 4: Segmentación y limpieza morfológica', ...
+        'FontWeight', 'bold', ...
+        'FontSize', 16);
+
+    sg.Color = 'w';
+
+    %% ------------------------------------------------------------
+    % Guardar imagen
+    % ------------------------------------------------------------
+
+    try
+        exportgraphics(fig, cfg.nombre_figura_morfologia, ...
+            'Resolution', 200, ...
+            'BackgroundColor', 'current');
+    catch
+        saveas(fig, cfg.nombre_figura_morfologia);
+    end
+
+    fprintf('\nFigura de morfología guardada en:\n%s\n', ...
+        cfg.nombre_figura_morfologia);
+
+end
+
+
+%% ================================================================
+% FUNCIÓN LOCAL: Título blanco para figuras con fondo negro
+% ================================================================
+
+function titulo_dark(txt)
+
+    title(txt, ...
+        'Color', 'w', ...
+        'FontWeight', 'bold');
+
+    ax = gca;
+    ax.Color = 'k';
+    ax.XColor = 'w';
+    ax.YColor = 'w';
 
 end

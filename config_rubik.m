@@ -73,7 +73,7 @@ function cfg = config_rubik()
     % ============================================================
 
     cfg.mostrar_figuras = true;
-    cfg.guardar_figuras = false;
+    cfg.guardar_figuras = true;
 
     % Número de barras para histogramas HSV.
     cfg.numBins = 50;
@@ -465,14 +465,14 @@ function cfg = config_rubik()
     cfg.guardar_poligonos_caras = true;
 
     % Reutilizar polígonos guardados en ejecuciones posteriores.
-    cfg.reutilizar_poligonos_caras = true;
+    cfg.reutilizar_poligonos_caras = false;
 
     % IMPORTANTE:
     % Como ya tienes polígonos guardados de la selección manual anterior,
     % para probar Hough por primera vez deja esto en true.
     %
     % Después de verificar que Hough funciona bien, puedes volverlo a false.
-    cfg.forzar_nueva_seleccion_caras = false;
+    cfg.forzar_nueva_seleccion_caras = true;
 
     % Carpeta donde se guardarán los puntos seleccionados o detectados.
     cfg.poligonos_dir = fullfile(cfg.resultados_dir, 'poligonos_caras');
@@ -757,4 +757,29 @@ function cfg = config_rubik()
 
     % Guardar tablas consolidadas.
     cfg.guardar_tablas_fase12 = true;
+
+    %% ============================================================
+    % FIGURAS PARA README / GITHUB
+    % ============================================================
+
+    cfg.docs_dir = 'docs';
+    cfg.docs_img_dir = fullfile(cfg.docs_dir, 'img');
+
+    if ~exist(cfg.docs_dir, 'dir')
+        mkdir(cfg.docs_dir);
+    end
+
+    if ~exist(cfg.docs_img_dir, 'dir')
+        mkdir(cfg.docs_img_dir);
+    end
+
+    cfg.generar_figuras_readme = true;
+
+    cfg.nombre_figura_rectificacion = fullfile( ...
+        cfg.docs_img_dir, ...
+        'fase5_rectificacion_caras.png');
+
+    cfg.nombre_figura_morfologia = fullfile( ...
+        cfg.docs_img_dir, ...
+        'fase4_morfologia.png');
 end

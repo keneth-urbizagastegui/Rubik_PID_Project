@@ -23,6 +23,24 @@ function datos = fase5_regionprops_kmeans(datos, cfg)
         cfg.modo_extraccion_candidatos = 'geometrico';
     end
 
+    %% ------------------------------------------------------------
+    % Figuras para README / GitHub
+    % ------------------------------------------------------------
+
+    if ~isfield(cfg, 'generar_figuras_readme')
+        cfg.generar_figuras_readme = false;
+    end
+
+    if ~isfield(cfg, 'docs_img_dir')
+        cfg.docs_img_dir = fullfile('docs', 'img');
+    end
+
+    if ~isfield(cfg, 'nombre_figura_rectificacion')
+        cfg.nombre_figura_rectificacion = fullfile( ...
+            cfg.docs_img_dir, ...
+            'fase5_rectificacion_caras.png');
+    end
+
     fprintf('Modo de extracción de candidatos: %s\n', cfg.modo_extraccion_candidatos);
 
     switch lower(cfg.modo_extraccion_candidatos)
@@ -76,6 +94,19 @@ function datos = fase5_regionprops_kmeans(datos, cfg)
                 datos.mask_roi2_crop, ...
                 'Imagen 2', ...
                 cfg);
+
+            % Figura especial para README / GitHub:
+            % muestra la rectificación geométrica de las caras visibles.
+            if cfg.generar_figuras_readme
+
+                guardar_figura_rectificacion_readme( ...
+                    datos.img1_roi, ...
+                    poligonos1, ...
+                    datos.img2_roi, ...
+                    poligonos2, ...
+                    cfg);
+
+            end
 
             candidatos1 = extraer_candidatos_geometricos( ...
                 datos.img1_roi, ...
@@ -1101,5 +1132,245 @@ function visualizar_candidatos_regionprops(img_roi, candidatos, titulo_figura)
     end
 
     hold off;
+
+end
+
+%% ================================================================
+% FUNCIÓN LOCAL: Guardar figura de rectificación para README
+% ================================================================
+
+function guardar_figura_rectificacion_readme(img1_roi, poligonos1, img2_roi, poligonos2, cfg)
+% ================================================================
+% Genera una figura para documentar la rectificación geométrica.
+%
+% La figura muestra:
+%   - ROI original con polígonos detectados.
+%   - Cara superior rectificada.
+%   - Cara izquierda rectificada.
+%   - Cara derecha rectificada.
+%
+% Se hace para Imagen 1 e Imagen 2.
+% ================================================================
+
+    if ~exist(cfg.docs_img_dir, 'dir')
+        mkdir(cfg.docs_img_dir);
+    end
+
+    img1_roi = im2double(img1_roi);
+    img2_roi = im2double(img2_roi);
+
+    caras1 = rectificar_caras_para_figura(img1_roi, poligonos1, cfg);
+    caras2 = rectificar_caras_para_figura(img2_roi, poligonos2, cfg);
+
+    fig = figure( ...
+        'Name', 'Fase 5 - Rectificación geométrica de caras', ...
+        'NumberTitle', 'off', ...
+        'Color', 'k', ...
+        'Position', [100 100 1500 720]);
+
+    if ~cfg.mostrar_figuras
+        set(fig, 'Visible', 'off');
+    end
+
+    %% ------------------------------------------------------------
+    % Fila 1: Imagen 1
+    % ------------------------------------------------------------
+
+    subplot(2,4,1);
+    mostrar_roi_con_poligonos(img1_roi, poligonos1);
+    titulo_dark_fase5('Imagen 1 - Caras detectadas');
+
+    subplot(2,4,2);
+    imshow(caras1.superior);
+    dibujar_grilla_rectificada(cfg);
+    titulo_dark_fase5('Superior rectificada');
+
+    subplot(2,4,3);
+    imshow(caras1.izquierda);
+    dibujar_grilla_rectificada(cfg);
+    titulo_dark_fase5('Izquierda rectificada');
+
+    subplot(2,4,4);
+    imshow(caras1.derecha);
+    dibujar_grilla_rectificada(cfg);
+    titulo_dark_fase5('Derecha rectificada');
+
+    %% ------------------------------------------------------------
+    % Fila 2: Imagen 2
+    % ------------------------------------------------------------
+
+    subplot(2,4,5);
+    mostrar_roi_con_poligonos(img2_roi, poligonos2);
+    titulo_dark_fase5('Imagen 2 - Caras detectadas');
+
+    subplot(2,4,6);
+    imshow(caras2.superior);
+    dibujar_grilla_rectificada(cfg);
+    titulo_dark_fase5('Superior rectificada');
+
+    subplot(2,4,7);
+    imshow(caras2.izquierda);
+    dibujar_grilla_rectificada(cfg);
+    titulo_dark_fase5('Izquierda rectificada');
+
+    subplot(2,4,8);
+    imshow(caras2.derecha);
+    dibujar_grilla_rectificada(cfg);
+    titulo_dark_fase5('Derecha rectificada');
+
+    sg = sgtitle('Fase 5: Rectificación geométrica de caras visibles', ...
+        'FontWeight', 'bold', ...
+        'FontSize', 17);
+
+    sg.Color = 'w';
+
+    %% ------------------------------------------------------------
+    % Guardar imagen
+    % ------------------------------------------------------------
+
+    try
+        exportgraphics(fig, cfg.nombre_figura_rectificacion, ...
+            'Resolution', 200, ...
+            'BackgroundColor', 'current');
+    catch
+        saveas(fig, cfg.nombre_figura_rectificacion);
+    end
+
+    fprintf('\nFigura de rectificación guardada en:\n%s\n', ...
+        cfg.nombre_figura_rectificacion);
+
+end
+
+
+%% ================================================================
+% FUNCIÓN LOCAL: Rectificar caras para figura
+% ================================================================
+
+function caras = rectificar_caras_para_figura(img_roi, poligonos, cfg)
+
+    nombres_caras = {'superior', 'izquierda', 'derecha'};
+
+    W = cfg.face_warp_size;
+
+    destino = [ ...
+        1, 1; ...
+        W, 1; ...
+        W, W; ...
+        1, W ...
+    ];
+
+    caras = struct();
+
+    for i = 1:numel(nombres_caras)
+
+        cara = nombres_caras{i};
+
+        puntos_origen = poligonos.(cara);
+
+        tform = fitgeotrans(puntos_origen, destino, 'projective');
+
+        cara_rectificada = imwarp( ...
+            img_roi, ...
+            tform, ...
+            'OutputView', imref2d([W W]));
+
+        caras.(cara) = cara_rectificada;
+
+    end
+
+end
+
+
+%% ================================================================
+% FUNCIÓN LOCAL: Mostrar ROI con polígonos de caras
+% ================================================================
+
+function mostrar_roi_con_poligonos(img_roi, poligonos)
+
+    imshow(img_roi);
+    hold on;
+
+    colores = struct();
+    colores.superior = 'y';
+    colores.izquierda = 'c';
+    colores.derecha = 'm';
+
+    nombres_caras = {'superior', 'izquierda', 'derecha'};
+
+    for i = 1:numel(nombres_caras)
+
+        cara = nombres_caras{i};
+        pts = poligonos.(cara);
+
+        pts_cerrado = [pts; pts(1,:)];
+
+        plot(pts_cerrado(:,1), pts_cerrado(:,2), ...
+            'Color', colores.(cara), ...
+            'LineWidth', 2.2);
+
+        cx = mean(pts(:,1));
+        cy = mean(pts(:,2));
+
+        text(cx, cy, upper(cara(1)), ...
+            'Color', 'w', ...
+            'BackgroundColor', 'k', ...
+            'FontWeight', 'bold', ...
+            'FontSize', 12, ...
+            'HorizontalAlignment', 'center');
+
+    end
+
+    hold off;
+
+end
+
+
+%% ================================================================
+% FUNCIÓN LOCAL: Dibujar grilla 3x3 sobre cara rectificada
+% ================================================================
+
+function dibujar_grilla_rectificada(cfg)
+
+    hold on;
+
+    W = cfg.face_warp_size;
+    N = cfg.grid_n;
+
+    paso = W / N;
+
+    for k = 1:(N-1)
+
+        x = k * paso;
+        y = k * paso;
+
+        plot([x x], [1 W], ...
+            'w-', ...
+            'LineWidth', 1.5);
+
+        plot([1 W], [y y], ...
+            'w-', ...
+            'LineWidth', 1.5);
+
+    end
+
+    hold off;
+
+end
+
+
+%% ================================================================
+% FUNCIÓN LOCAL: Título blanco para figura oscura
+% ================================================================
+
+function titulo_dark_fase5(txt)
+
+    title(txt, ...
+        'Color', 'w', ...
+        'FontWeight', 'bold');
+
+    ax = gca;
+    ax.Color = 'k';
+    ax.XColor = 'w';
+    ax.YColor = 'w';
 
 end
