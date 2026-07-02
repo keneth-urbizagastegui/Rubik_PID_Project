@@ -1,0 +1,10 @@
+fase,descripcion,estado
+Fase 1,Lectura RGB y análisis HSV,completada
+Fase 2,Preprocesamiento y suavizado,completada
+Fase 3,Extracción de ROI del cubo,completada
+Fase 4,Segmentación preliminar por HSV,completada
+Fase 5,Extracción geométrica de 27 candidatos y clasificación con K-means,completada
+Fase 6,Agrupación de candidatos por caras visibles,completada
+Fase 7,Construcción de matrices 3x3 por cara,completada
+Fase 8,Integración de seis caras por color central,completada
+Fase 9,Evaluación cuantitativa con ground truth CSV,completada

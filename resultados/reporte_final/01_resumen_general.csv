@@ -1,0 +1,10 @@
+fase,descripcion,estado
+Fase 1,Lectura y análisis HSV,completada
+Fase 2,Preprocesamiento,completada
+Fase 3,Extracción de ROI,completada
+Fase 4,Segmentación preliminar por color,completada
+Fase 5,Detección de stickers con regionprops y K-means,completada
+Fase 6,Asignación geométrica por caras,completada
+Fase 7,Construcción de matrices 3x3,completada
+Fase 8,Integración de seis caras,completada
+Fase 9,Evaluación cuantitativa,completada

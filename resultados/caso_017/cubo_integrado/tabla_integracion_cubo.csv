@@ -1,0 +1,7 @@
+imagen_origen,cara_visible_origen,color_centro,codigo_centro,estado,fila_1,fila_2,fila_3
+Imagen 1,superior,verde,V,integrada,[ N A V ],[ Az V N ],[ N R N ]
+Imagen 1,izquierda,blanco,B,integrada,[ V B B ],[ Az B V ],[ V N A ]
+Imagen 1,derecha,naranja,N,integrada,[ Az A Az ],[ A N R ],[ R A Az ]
+Imagen 2,superior,azul,Az,integrada,[ B B Az ],[ B Az N ],[ R N B ]
+Imagen 2,izquierda,rojo,R,integrada,[ R V V ],[ R R R ],[ A Az N ]
+Imagen 2,derecha,amarillo,A,integrada,[ A V R ],[ V A B ],[ B Az A ]

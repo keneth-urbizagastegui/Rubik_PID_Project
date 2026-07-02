@@ -1,0 +1,2 @@
+estado_general,ok_deteccion,ok_caras,ok_integracion,ok_accuracy,accuracy,observacion
+correcto,1,1,1,1,1,El pipeline reconstruyo correctamente el cubo evaluado.

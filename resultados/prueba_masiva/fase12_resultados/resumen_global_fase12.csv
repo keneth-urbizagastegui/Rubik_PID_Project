@@ -1,0 +1,2 @@
+total_casos,casos_correctos,casos_fallidos,stickers_totales,correctos_totales,incorrectos_totales,accuracy_global_dataset,accuracy_promedio,accuracy_minima,accuracy_maxima,desviacion_accuracy,tiempo_total_segundos,tiempo_promedio_segundos
+20,20,0,1080,1078,2,0.998148148148148,0.998148148148148,0.962962962962963,1,0.00828173324999921,14.5449782,0.72724891

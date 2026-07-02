@@ -1,0 +1,26 @@
+# MATLAB autosave / temporary files
+*.asv
+*.m~
+*.autosave
+
+# MATLAB cache / generated folders
+*.slxc
+*.mex*
+*.p
+*.fig
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
+
+# Large generated results - opcional
+# Descomenta si NO quieres subir resultados procesados
+# resultados/
+
+# Dataset - opcional
+# Descomenta si NO quieres subir las imágenes del dataset
+# dataset/

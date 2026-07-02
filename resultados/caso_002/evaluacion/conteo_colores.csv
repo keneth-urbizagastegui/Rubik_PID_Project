@@ -1,0 +1,7 @@
+color,conteo_esperado,conteo_detectado,diferencia,estado
+B,9,8,-1,revisar
+A,9,10,1,revisar
+R,9,9,0,correcto
+N,9,9,0,correcto
+V,9,9,0,correcto
+Az,9,9,0,correcto

@@ -1,0 +1,2 @@
+estado_general,ok_deteccion,ok_caras,ok_integracion,ok_accuracy,accuracy,observacion
+revisar,1,1,1,0,0.962962962962963,Alguna etapa del pipeline requiere revision.
