@@ -27,7 +27,7 @@ function cfg = config_rubik()
 
     % Caso actual que se desea procesar.
     % Para probar otro caso, cambia solo esta línea.
-    cfg.caso_actual = 'caso_002';
+    cfg.caso_actual = 'caso_001';
 
     if cfg.usar_dataset
 

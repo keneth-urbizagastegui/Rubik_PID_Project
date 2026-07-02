@@ -118,6 +118,22 @@ flowchart TD
   <img src="docs/img/pipeline_general.png" width="850" alt="Pipeline general del proyecto">
 </p>
 
+### Relación entre el pipeline visual y las fases del código
+
+El diagrama anterior resume el flujo conceptual del proyecto. Algunas etapas visuales agrupan varias operaciones internas del código, por lo que no siempre coinciden exactamente con el número de fase implementado en MATLAB.
+
+| Etapa del pipeline visual | Fase o módulo del código | Evidencia visual sugerida |
+|---|---|---|
+| Entrada de imágenes | Dataset de cada caso | `portada_cubo.png` |
+| Conversión y análisis de color | Fase 1 | `fase1_hsv.png` |
+| Preprocesamiento | Fase 2 | `fase2_preprocesamiento.png` |
+| Segmentación del cubo | Fase 3 | `fase3_roi.png` |
+| Segmentación por color y morfología | Fase 4 | `fase4_mascaras_color.png` y `fase4_morfologia.png` |
+| Rectificación geométrica de caras | Fase 5 | `fase5_rectificacion_caras.png` |
+| Clasificación de stickers | Fase 5 y Fase 7 | `fase5_candidatos.png` y `fase7_matrices_3x3.png` |
+| Representación digital del cubo | Fase 8 | `fase8_cubo_integrado.png` |
+| Evaluación del dataset | Fase 11 y Fase 12 | `grafico_accuracy_por_caso.png`, `matriz_confusion_global.png` y `metricas_globales_por_color.png` |
+
 ---
 
 ## 5. Descripción de las fases
@@ -188,6 +204,12 @@ Técnicas usadas:
   <img src="docs/img/fase4_mascaras_color.png" width="850" alt="Máscaras HSV por color">
 </p>
 
+La limpieza morfológica permite reducir ruido, unir regiones fragmentadas y compactar las máscaras que representan el cubo y sus stickers. Esta evidencia visual ayuda a mostrar cómo las operaciones de apertura, cierre, relleno de huecos y filtrado de componentes mejoran la segmentación.
+
+<p align="center">
+  <img src="docs/img/fase4_morfologia.png" width="850" alt="Limpieza morfológica de las máscaras">
+</p>
+
 ---
 
 ### Fase 5: Extracción geométrica de candidatos y clasificación de color
@@ -212,6 +234,18 @@ Técnicas usadas:
 - Muestreo de parches centrales.
 - K-means de MATLAB.
 - Características HSV/RGB promedio.
+
+#### Rectificación geométrica de caras
+
+La rectificación geométrica convierte cada cara visible del cubo, originalmente observada en perspectiva, en una vista frontal cuadrada. Esta etapa es clave porque permite dividir cada cara en una grilla regular de 3x3 y extraer los stickers de manera ordenada.
+
+<p align="center">
+  <img src="docs/img/fase5_rectificacion_caras.png" width="850" alt="Rectificación geométrica de las caras visibles">
+</p>
+
+#### Candidatos geométricos y clasificación
+
+Después de rectificar las caras, el sistema divide cada cara en nueve regiones y calcula características promedio de color para clasificar cada sticker.
 
 <p align="center">
   <img src="docs/img/fase5_candidatos.png" width="850" alt="Candidatos geométricos y K-means">
